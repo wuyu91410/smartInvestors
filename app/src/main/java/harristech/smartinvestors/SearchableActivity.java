@@ -51,9 +51,9 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
                 // Current context (this activity)
                 this,
                 // ID of list item layout
-                R.layout.search_results,
+                R.layout.search_item,
                 // ID of the textview to populate
-                R.id.search_res,
+                R.id.search_text,
                 // Forecast data
                 new ArrayList<String>());
 

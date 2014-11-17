@@ -1,12 +1,19 @@
 package harristech.smartinvestors;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +38,8 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
     private ListView mListView;
     private SearchView searchView;
     private String requestJsonStr = null;
-    private ArrayAdapter<String> mSearchAdapter;
+    //private ArrayAdapter<String> mSearchAdapter;
+    private SearchListAdapter mSearchAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +55,7 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
 
         mListView = (ListView) findViewById(R.id.list_search);
 
-        mSearchAdapter = new ArrayAdapter<String>(
+        mSearchAdapter = new SearchListAdapter(
                 // Current context (this activity)
                 this,
                 // ID of list item layout
@@ -205,4 +213,81 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
     public boolean onClose() {
         return false;
     }
+
+    /**
+     * Customer Adapter
+     */
+    private class SearchListAdapter extends ArrayAdapter<String> {
+
+        private ArrayList<String> search_list;
+        /**
+         * Constructor
+         *
+         * @param context            The current context.
+         * @param resource           The resource ID for a layout file containing a layout to use when
+         *                           instantiating views.
+         * @param textViewResourceId The id of the TextView within the layout resource to be populated
+         * @param list               The objects to represent in the ListView.
+         */
+        public SearchListAdapter(Context context, int resource, int textViewResourceId,
+                                 ArrayList<String> list) {
+            super(context, resource, textViewResourceId, list);
+            this.search_list = new ArrayList<String>();
+            this.search_list = list;
+        }
+
+        private class ViewHolder {
+            TextView stockInfo;
+            CheckBox autoSave;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @param position
+         * @param convertView
+         * @param parent
+         */
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            ViewHolder holder = null;
+
+            if (convertView == null) {
+                LayoutInflater vi = (LayoutInflater)getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
+                convertView = vi.inflate(R.layout.search_item, null);
+
+                holder = new ViewHolder();
+                holder.stockInfo = (TextView) convertView.findViewById(R.id.search_text);
+                holder.autoSave = (CheckBox) convertView.findViewById(R.id.search_chk);
+                convertView.setTag(holder);
+
+                holder.autoSave.setOnClickListener( new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(),
+                                "Clicked on Checkbox",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+                holder.stockInfo.setOnClickListener( new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(),
+                                "Clicked on Text",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.stockInfo.setText(search_list.get(position));
+            return convertView;
+        }
+
+
+    }
 }
+
+

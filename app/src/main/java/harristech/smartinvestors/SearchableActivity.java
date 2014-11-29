@@ -163,7 +163,7 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
             String name = resultArr.getJSONObject(i).getString("name");
             String exchDisp = resultArr.getJSONObject(i).getString("exchDisp");
             String typeDisp = resultArr.getJSONObject(i).getString("typeDisp");
-            stickerInfo[i] = symbol + "-" + name + "\n" + typeDisp + "-" + exchDisp;
+            stickerInfo[i] = symbol + " - " + name + "\n" + typeDisp + "-" + exchDisp;
         }
 
         return stickerInfo;

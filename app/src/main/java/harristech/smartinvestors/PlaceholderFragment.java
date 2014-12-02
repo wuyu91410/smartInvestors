@@ -1,10 +1,12 @@
 package harristech.smartinvestors;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -35,7 +37,7 @@ public class PlaceholderFragment extends Fragment {
                 // Forecast data
                 new ArrayList<String>());
 
-        String[] exampleTicker = {"GOOG", "AAPL", "MSFT"};
+        String[] exampleTicker = {"GOOGL", "AAPL", "MSFT"};
         for (String ticker : exampleTicker) {
             mFavorListAdapter.add(ticker);
         }
@@ -43,6 +45,17 @@ public class PlaceholderFragment extends Fragment {
         // Get a reference to the ListView, and attach this adapter to it
         ListView listView =(ListView) rootView.findViewById(R.id.list_favor);
         listView.setAdapter(mFavorListAdapter);
+        // Create the click listener
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String ticker = mFavorListAdapter.getItem(position);
+                //Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), FinancialActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, ticker);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -52,11 +65,5 @@ public class PlaceholderFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-/*
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
-    }
-*/
 
 }

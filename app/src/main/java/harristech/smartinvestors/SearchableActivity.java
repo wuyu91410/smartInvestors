@@ -2,6 +2,7 @@ package harristech.smartinvestors;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,15 +39,12 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
     private ListView mListView;
     private SearchView searchView;
     private String requestJsonStr = null;
-    //private ArrayAdapter<String> mSearchAdapter;
     private SearchListAdapter mSearchAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        Log.d("Searchable Activity", "success");
 
         searchView = (SearchView) findViewById(R.id.search);
         searchView.setIconifiedByDefault(false);
@@ -63,19 +61,19 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
                 // ID of the textview to populate
                 R.id.search_text,
                 // Forecast data
-                new ArrayList<String>());
+                new ArrayList<StockInfo>());
 
         // Get a reference to the ListView, and attach this adapter to it
         mListView.setAdapter(mSearchAdapter);
 
     }
 
-    public class DoMySearch extends AsyncTask<String, Void, String[]> {
+    public class DoMySearch extends AsyncTask<String, Void, ArrayList<StockInfo>> {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        protected String[] doInBackground(String... requestTerm) {
+        protected ArrayList<StockInfo> doInBackground(String... requestTerm) {
 
             final String LOG_TAG = Connection.class.getSimpleName();
             try {
@@ -133,19 +131,19 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
         }
 
         @Override
-        protected void onPostExecute(String[] result) {
+        protected void onPostExecute(ArrayList<StockInfo> result) {
             if(result != null) {
                 mSearchAdapter.clear();
-                for (String oneComInfo : result) {
+                for (StockInfo oneComInfo : result) {
                     mSearchAdapter.add(oneComInfo);
                 }
             }
         }
     }
 
-    private String[] getStrFromJson(String str) throws JSONException {
+    private ArrayList<StockInfo> getStrFromJson(String str) throws JSONException {
         if (str == null) {
-            System.out.println("Error: Json string null");
+            Log.d("JSON parse error" ,"JSON string null");
             return null;
         }
         int j = 0;
@@ -157,16 +155,17 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
         JSONObject stickerJson = new JSONObject(jsonStr);
         JSONArray resultArr = stickerJson.getJSONObject("ResultSet").getJSONArray("Result");
 
-        String[] stickerInfo = new String[resultArr.length()];
+        ArrayList<StockInfo> stockInfos = new ArrayList<>();
         for (int i = 0; i < resultArr.length(); i++) {
             String symbol = resultArr.getJSONObject(i).getString("symbol");
             String name = resultArr.getJSONObject(i).getString("name");
             String exchDisp = resultArr.getJSONObject(i).getString("exchDisp");
             String typeDisp = resultArr.getJSONObject(i).getString("typeDisp");
-            stickerInfo[i] = symbol + " - " + name + "\n" + typeDisp + "-" + exchDisp;
+            StockInfo stockInfo = new StockInfo(symbol, name, exchDisp,typeDisp);
+            stockInfos.add(stockInfo);
         }
 
-        return stickerInfo;
+        return stockInfos;
     }
 
     /**
@@ -217,12 +216,12 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
     /**
      * Customer Adapter
      */
-    private class SearchListAdapter extends ArrayAdapter<String> {
+    private class SearchListAdapter extends ArrayAdapter<StockInfo> {
 
-        private ArrayList<String> search_list;
+        private ArrayList<StockInfo> search_list;
+        private Context mContext;
         /**
          * Constructor
-         *
          * @param context            The current context.
          * @param resource           The resource ID for a layout file containing a layout to use when
          *                           instantiating views.
@@ -230,10 +229,11 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
          * @param list               The objects to represent in the ListView.
          */
         public SearchListAdapter(Context context, int resource, int textViewResourceId,
-                                 ArrayList<String> list) {
+                                 ArrayList<StockInfo> list) {
             super(context, resource, textViewResourceId, list);
-            this.search_list = new ArrayList<String>();
-            this.search_list = list;
+            mContext = context;
+            search_list = new ArrayList<>();
+            search_list = list;
         }
 
         private class ViewHolder {
@@ -249,9 +249,9 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
          * @param parent
          */
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
-            ViewHolder holder = null;
+            ViewHolder holder;
 
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater)getSystemService(
@@ -263,18 +263,38 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
                 holder.autoSave = (CheckBox) convertView.findViewById(R.id.search_chk);
                 convertView.setTag(holder);
 
+                final ViewHolder finalHolder = holder;
                 holder.autoSave.setOnClickListener( new View.OnClickListener() {
                     public void onClick(View v) {
-                        Toast.makeText(getApplicationContext(),
-                                "Clicked on Checkbox",
-                                Toast.LENGTH_LONG).show();
+                        if (finalHolder.autoSave.isChecked()) {
+                            // Do the RequestData task and add the data into DB
+                            StockInfo info = search_list.get(position);
+                            RequestFinancialData requestFinancialData =
+                                    new RequestFinancialData(info.getTicker());
+                            requestFinancialData.execute();
+
+                            Toast.makeText(getApplicationContext(),
+                                    "Added " + info.getTicker(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            // TODO: Remove the data from DB
+                            StockInfo info = search_list.get(position);
+
+                            Toast.makeText(getApplicationContext(),
+                                    "Unfollow " + info.getTicker(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 holder.stockInfo.setOnClickListener( new View.OnClickListener() {
                     public void onClick(View v) {
                         Toast.makeText(getApplicationContext(),
                                 "Clicked on Text",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_SHORT).show();
+                        StockInfo info = search_list.get(position);
+                        Intent intent = new Intent(mContext, FinancialActivity.class)
+                                .putExtra(Intent.EXTRA_TEXT, info.getTicker());
+                        startActivity(intent);
                     }
                 });
             }
@@ -282,12 +302,12 @@ public class SearchableActivity extends Activity implements SearchView.OnQueryTe
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.stockInfo.setText(search_list.get(position));
+            holder.stockInfo.setText(search_list.get(position).getStockInfo());
             return convertView;
         }
-
-
     }
+
+
 }
 
 

@@ -7,6 +7,6 @@
     <string name="search_label" translatable="false">Search</string>
     <string name="search_hint" translatable="false">CompanyName/StockTicker</string>
     <string name="NoData" translatable="false">No data</string>
-    <string name="title_activity_financial">FinancialActivity</string>
+    <string name="title_activity_financial">Financials</string>
 
 </resources>

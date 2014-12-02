@@ -3,8 +3,9 @@ package harristech.smartinvestors.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import harristech.smartinvestors.data.FinancialContract.StockEntry;
+
 import harristech.smartinvestors.data.FinancialContract.FinancialEntry;
+import harristech.smartinvestors.data.FinancialContract.StockEntry;
 
 /**
  * Created by henry on 11/21/14.
@@ -69,6 +70,9 @@ public class FinancialDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + StockEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FinancialEntry.TABLE_NAME);
+        onCreate(sqLiteDatabase);
     }
 }

@@ -1,0 +1,93 @@
+package harristech.smartinvestors;
+
+/**
+ * Created by henry on 11/30/14.
+ */
+public class FinancialData {
+    public static final String[] CASH_FLOW = {
+            "Period Ending",
+            "Net Income",
+            "Depreciation",
+            "Adjustments To Net Income",
+            "Changes In Accounts Receivables",
+            "Changes In Liabilities",
+            "Changes In Inventories",
+            "Changes In Other Operating Activities",
+            "Total Cash Flow From Operating Activities",
+            "Capital Expenditures",
+            "Investments",
+            "Other Cash flows from Investing Activities",
+            "Total Cash Flows From Investing Activities",
+            "Dividends Paid",
+            "Sale Purchase of Stock",
+            "Net Borrowings",
+            "Other Cash Flows from Financing Activities",
+            "Total Cash Flows From Financing Activities",
+            "Effect Of Exchange Rate Changes",
+            "Change In Cash and Cash Equivalents"
+    };
+    public static final String[] BALANCE_SHEET = {
+            //"Period Ending",
+            "Cash And Cash Equivalents",
+            "Short Term Investments",
+            "Net Receivables",
+            "Inventory",
+            "Other Current Assets",
+            "Total Current Assets",
+            "Long Term Investments",
+            "Property Plant and Equipment",
+            "Goodwill",
+            "Intangible Assets",
+            "Accumulated Amortization",
+            "Other Assets",
+            "Deferred Long Term Asset Charges",
+            "Total Assets",
+            "Accounts Payable",
+            "Short/Current Long Term Debt",
+            "Other Current Liabilities",
+            "Total Current Liabilities",
+            "Long Term Debt",
+            "Other Liabilities",
+            "Deferred Long Term Liability Charges",
+            "Minority Interest",
+            "Negative Goodwill",
+            "Total Liabilities",
+            "Misc Stocks Options Warrants",
+            "Redeemable Preferred Stock",
+            "Preferred Stock",
+            "Common Stock",
+            "Retained Earnings",
+            "Treasury Stock",
+            "Capital Surplus",
+            "Other Stockholder Equity",
+            "Total Stockholder Equity",
+            "Net Tangible Assets"
+    };
+    public static final String[] INCOME_STATEMENT = {
+            //"Period Ending",
+            "Total Revenue",
+            "Cost of Revenue",
+            "Gross Profit",
+            "Research Development",
+            "Selling General and Administrative",
+            "Non Recurring",
+            "Others",
+            "Total Operating Expenses",
+            "Operating Income or Loss",
+            "Total Other Income/Expenses Net",
+            "Earnings Before Interest And Taxes",
+            "Interest Expense",
+            "Income Before Tax",
+            "Income Tax Expense",
+            "Minority Interest",
+            "Net Income From Continuing Ops",
+            "Discontinued Operations",
+            "Extraordinary Items",
+            "Effect Of Accounting Changes",
+            "Other Items",
+            "Net Income",
+            "Preferred Stock And Other Adjustments",
+            "Net Income Applicable To Common Shares"
+    };
+
+}
